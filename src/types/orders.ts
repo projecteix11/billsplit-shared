@@ -23,6 +23,7 @@ export interface Order {
 export interface OrderItem {
   id: string
   order_id: string
+  dish_id: string | null
   dish_name: string
   dish_price: number
   quantity: number
@@ -30,8 +31,13 @@ export interface OrderItem {
   diner_name: string | null
   kitchen_status: KitchenStatus
   payment_status: PaymentStatus
+  customization: OrderItemCustomization | null
   created_at: string
 }
+
+// Re-exported from dishes for convenience
+import type { OrderItemCustomization } from './dishes'
+export type { OrderItemCustomization }
 
 export interface OrderGuest {
   id: string
@@ -54,9 +60,11 @@ export interface Payment {
 }
 
 export type NewOrderItem = {
+  dish_id?: string
   dish_name: string
   dish_price: number
   quantity: number
   notes?: string
   diner_name?: string
+  customization?: OrderItemCustomization
 }
