@@ -42,7 +42,17 @@ CREATE TABLE IF NOT EXISTS custom_dishes (
 CREATE INDEX IF NOT EXISTS idx_custom_dishes_table_id
   ON custom_dishes(table_id);
 
--- ── 3. Add customization columns to order_items ──────────────────────────────
+-- ── 3. Add ingredient choice limits to dishes ────────────────────────────────
+-- max_included_choices: max number of default (included) ingredients the client can select
+--   NULL = unlimited (all included)
+-- max_extra_choices: max number of paid extras the client can add
+--   NULL = unlimited
+
+ALTER TABLE dishes
+  ADD COLUMN IF NOT EXISTS max_included_choices integer DEFAULT NULL,
+  ADD COLUMN IF NOT EXISTS max_extra_choices    integer DEFAULT NULL;
+
+-- ── 4. Add customization columns to order_items ──────────────────────────────
 
 ALTER TABLE order_items
   ADD COLUMN IF NOT EXISTS dish_id       uuid REFERENCES dishes(id),
