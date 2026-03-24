@@ -1,7 +1,16 @@
 export const API_ROUTES = {
   // Dishes (menu)
   dishes:               '/api/dishes',
+  dish:                 (id: string) => `/api/dishes/${id}`,
+  dishAllergens:        (id: string) => `/api/dishes/${id}/allergens`,
+  dishIngredients:      (id: string) => `/api/dishes/${id}/ingredients`,
+  dishIngredient:       (dishId: string, ingId: string) => `/api/dishes/${dishId}/ingredients/${ingId}`,
   categories:           '/api/categories',
+  allergens:            '/api/allergens',
+
+  // Custom dishes (special requests per table)
+  customDishes:         '/api/custom-dishes',
+  tableCustomDishes:    (tableId: string) => `/api/tables/${tableId}/custom-dishes`,
 
   // Orders
   createOrder:          '/api/orders',
