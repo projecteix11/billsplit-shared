@@ -60,18 +60,23 @@ ALTER TABLE order_items
 
 -- customization stores: { "added_ingredients": [...], "removed_ingredients": [...] }
 
--- ── 4. RLS for new tables ────────────────────────────────────────────────────
+-- ── 5. RLS for new tables ────────────────────────────────────────────────────
+-- Staff read their own tenant's rows; all writes go through the API
+-- (service_role bypasses RLS). anon has no access: `notes` holds free-text
+-- special requests (personal data) and must not be world-readable.
+-- Superseded the old USING (true) policies — see
+-- manegement/supabase/migrations/20260611100000_rls_lockdown_financial_tables.sql
 
 ALTER TABLE custom_dishes ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "custom_dishes_public_read" ON custom_dishes
-  FOR SELECT USING (true);
+DROP POLICY IF EXISTS "custom_dishes_public_read"  ON custom_dishes;
+DROP POLICY IF EXISTS "custom_dishes_auth_insert"  ON custom_dishes;
+DROP POLICY IF EXISTS "custom_dishes_auth_delete"  ON custom_dishes;
+DROP POLICY IF EXISTS "custom_dishes_staff_select" ON custom_dishes;
 
-CREATE POLICY "custom_dishes_auth_insert" ON custom_dishes
-  FOR INSERT WITH CHECK (true);
-
-CREATE POLICY "custom_dishes_auth_delete" ON custom_dishes
-  FOR DELETE USING (true);
+CREATE POLICY "custom_dishes_staff_select" ON custom_dishes
+  FOR SELECT TO authenticated
+  USING (tenant_id IN (SELECT public.get_my_tenant_ids()));
 
 -- ── 5. Enable realtime ───────────────────────────────────────────────────────
 

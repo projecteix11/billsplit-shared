@@ -42,14 +42,22 @@ ALTER TABLE daily_menus ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_menu_sections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE daily_menu_items ENABLE ROW LEVEL SECURITY;
 
+-- Menu data is public by design (it is the restaurant's menu), so reads stay
+-- open. Writes go through the API (service_role bypasses RLS) — the old
+-- `*_auth_all USING (true)` policies also applied to anon and are removed.
+-- See manegement/supabase/migrations/20260611100000_rls_lockdown_financial_tables.sql
+
+DROP POLICY IF EXISTS "daily_menus_auth_all"         ON daily_menus;
+DROP POLICY IF EXISTS "daily_menu_sections_auth_all" ON daily_menu_sections;
+DROP POLICY IF EXISTS "daily_menu_items_auth_all"    ON daily_menu_items;
+
+DROP POLICY IF EXISTS "daily_menus_public_read"         ON daily_menus;
+DROP POLICY IF EXISTS "daily_menu_sections_public_read" ON daily_menu_sections;
+DROP POLICY IF EXISTS "daily_menu_items_public_read"    ON daily_menu_items;
+
 CREATE POLICY "daily_menus_public_read" ON daily_menus FOR SELECT USING (true);
-CREATE POLICY "daily_menus_auth_all" ON daily_menus FOR ALL USING (true);
-
 CREATE POLICY "daily_menu_sections_public_read" ON daily_menu_sections FOR SELECT USING (true);
-CREATE POLICY "daily_menu_sections_auth_all" ON daily_menu_sections FOR ALL USING (true);
-
 CREATE POLICY "daily_menu_items_public_read" ON daily_menu_items FOR SELECT USING (true);
-CREATE POLICY "daily_menu_items_auth_all" ON daily_menu_items FOR ALL USING (true);
 
 -- Realtime (optional)
 DO $$ BEGIN ALTER PUBLICATION supabase_realtime ADD TABLE daily_menus;
