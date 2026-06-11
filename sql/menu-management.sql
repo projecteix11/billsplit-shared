@@ -74,9 +74,15 @@ DROP POLICY IF EXISTS "custom_dishes_auth_insert"  ON custom_dishes;
 DROP POLICY IF EXISTS "custom_dishes_auth_delete"  ON custom_dishes;
 DROP POLICY IF EXISTS "custom_dishes_staff_select" ON custom_dishes;
 
+-- LIVE-SCHEMA NOTE: the production table has no tenant_id column (drifted from
+-- the CREATE TABLE above), so tenant scope comes from table_id -> restaurant_tables.
 CREATE POLICY "custom_dishes_staff_select" ON custom_dishes
   FOR SELECT TO authenticated
-  USING (public.safe_cast_uuid(tenant_id::text) IN (SELECT public.get_my_tenant_ids()));
+  USING (EXISTS (
+    SELECT 1 FROM public.restaurant_tables rt
+    WHERE rt.id = public.safe_cast_uuid(custom_dishes.table_id::text)
+      AND rt.tenant_id IN (SELECT public.get_my_tenant_ids())
+  ));
 
 -- ── 5. Enable realtime ───────────────────────────────────────────────────────
 
