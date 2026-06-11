@@ -76,7 +76,7 @@ DROP POLICY IF EXISTS "custom_dishes_staff_select" ON custom_dishes;
 
 CREATE POLICY "custom_dishes_staff_select" ON custom_dishes
   FOR SELECT TO authenticated
-  USING (tenant_id IN (SELECT public.get_my_tenant_ids()));
+  USING (public.safe_cast_uuid(tenant_id::text) IN (SELECT public.get_my_tenant_ids()));
 
 -- ── 5. Enable realtime ───────────────────────────────────────────────────────
 
