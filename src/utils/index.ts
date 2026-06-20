@@ -1,2 +1,2 @@
-export * from './pricing'
-export * from './qr'
+export * from './pricing.js'
+export * from './qr.js'

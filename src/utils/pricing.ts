@@ -1,4 +1,4 @@
-import type { OrderItem } from '../types/orders'
+import type { OrderItem } from '../types/orders.js'
 
 export function formatPrice(amount: number, currency = 'EUR'): string {
   return new Intl.NumberFormat('es-ES', {
