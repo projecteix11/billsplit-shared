@@ -1,0 +1,24 @@
+name: CI
+
+# Merge gate (XC-4): @billsplit/shared had no CI at all. The package compiles to
+# the dist consumers import, so a broken build (e.g. an ESM regression) must fail
+# a PR rather than ship silently.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build

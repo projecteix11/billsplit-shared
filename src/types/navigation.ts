@@ -1,4 +1,4 @@
-import type { AppRoute } from './routes'
+import type { AppRoute } from './routes.js'
 
 export interface NavItem {
   key: string

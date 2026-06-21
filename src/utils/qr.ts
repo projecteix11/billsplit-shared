@@ -1,4 +1,4 @@
-import { QR_EXPIRY_MINUTES } from '../config/constants'
+import { QR_EXPIRY_MINUTES } from '../config/constants.js'
 
 export { QR_EXPIRY_MINUTES }
 

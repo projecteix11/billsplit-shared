@@ -36,7 +36,7 @@ export interface OrderItem {
 }
 
 // Re-exported from dishes for convenience
-import type { OrderItemCustomization } from './dishes'
+import type { OrderItemCustomization } from './dishes.js'
 export type { OrderItemCustomization }
 
 export interface OrderGuest {
